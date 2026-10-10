@@ -1,0 +1,236 @@
+/* =========================
+   GLOBAL
+========================= */
+*{
+    box-sizing: border-box;
+}
+
+body{
+    margin: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    background: #0b2c4d;               /* nền xanh đậm */
+    color: #ffffff;
+}
+
+/* =========================
+   HEADER
+========================= */
+.header{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 18px 28px;
+    background: linear-gradient(90deg, #0b2c4d, #123f6d);
+    border-bottom: 4px solid #f2c94c;  /* viền vàng */
+}
+
+.header-left h1{
+    margin: 0;
+    font-size: 26px;
+    color: #ffffff;
+    letter-spacing: 1px;
+}
+
+.header-left p{
+    margin-top: 6px;
+    font-size: 14px;
+    color: #d0e6ff;
+}
+
+.header-right img{
+    height: 70px;
+    object-fit: contain;
+}
+
+/* =========================
+   SECTIONS
+========================= */
+section{
+    padding: 24px 32px;
+}
+
+h2{
+    margin-top: 0;
+    color: #ffffff;
+    border-left: 6px solid #f2c94c;
+    padding-left: 10px;
+}
+
+/* =========================
+   UPLOAD
+========================= */
+.upload-section{
+    background: #123f6d;
+    margin: 20px;
+    border: 2px dashed #f2c94c;
+    border-radius: 10px;
+}
+
+.upload-form{
+    margin-top: 16px;
+}
+
+input[type="file"],
+input[type="text"],
+input[type="date"],
+input[type="time"]{
+    padding: 8px 10px;
+    margin: 6px 4px;
+    border-radius: 6px;
+    border: 1px solid #ffffff;
+    outline: none;
+    background: #ffffff;
+    color: #000;
+}
+
+button{
+    padding: 10px 18px;
+    margin-top: 10px;
+    background: #f2c94c;
+    border: none;
+    border-radius: 6px;
+    color: #000;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+button:hover{
+    background: #ffe58a;
+}
+
+/* =========================
+   PROGRESS
+========================= */
+#progress{
+    margin-top: 10px;
+    font-style: italic;
+    color: #d0e6ff;
+}
+
+/* =========================
+   TABLE
+========================= */
+.file-table{
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 16px;
+    background: #123f6d;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.file-table th{
+    background: #0b2c4d;
+    color: #f2c94c;
+    padding: 12px;
+    border-bottom: 2px solid #f2c94c;
+}
+
+.file-table td{
+    padding: 10px;
+    text-align: center;
+    border-bottom: 1px solid #2b5c8a;
+}
+
+.file-table tr:hover{
+    background: #1c558c;
+}
+
+/* =========================
+   BUTTON LINK
+========================= */
+.btn{
+    padding: 6px 14px;
+    background: #f2c94c;
+    color: #000;
+    text-decoration: none;
+    font-weight: bold;
+    border-radius: 5px;
+}
+
+.btn:hover{
+    background: #ffe58a;
+}
+
+/* =========================
+   RESULT PAGE
+========================= */
+.result-layout{
+    display: flex;
+    height: calc(100vh - 110px);
+}
+
+/* ===== SIDEBAR ===== */
+.sidebar{
+    width: 260px;
+    background: #0b2c4d;
+    border-right: 4px solid #f2c94c;
+    padding: 16px;
+    overflow-y: auto;
+}
+
+.sidebar h3{
+    margin-top: 0;
+    color: #ffffff;
+    text-align: center;
+    border-bottom: 1px solid #f2c94c;
+    padding-bottom: 8px;
+}
+
+.vehicle-item{
+    padding: 10px;
+    margin-bottom: 8px;
+    background: #123f6d;
+    border-left: 5px solid transparent;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.vehicle-item:hover{
+    background: #1c558c;
+    border-left: 5px solid #f2c94c;
+}
+
+/* ===== CONTENT ===== */
+.content{
+    flex: 1;
+    padding: 18px;
+    overflow-y: auto;
+}
+
+video, img{
+    max-width: 100%;
+    border: 3px solid #f2c94c;
+    border-radius: 10px;
+    margin-bottom: 16px;
+    background: #000;
+}
+
+/* ===== DETAIL ===== */
+#detail h3{
+    margin-top: 14px;
+    color: #f2c94c;
+}
+
+#detail p{
+    margin: 6px 0;
+    color: #e0f1ff;
+    font-size: 14px;
+}
+
+/* =========================
+   SCROLLBAR (OPTIONAL)
+========================= */
+::-webkit-scrollbar{
+    width: 8px;
+}
+
+::-webkit-scrollbar-track{
+    background: #0b2c4d;
+}
+
+::-webkit-scrollbar-thumb{
+    background: #f2c94c;
+    border-radius: 4px;
+}

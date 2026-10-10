@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8">
+    <title>HỆ THỐNG NHẬN DẠNG PHƯƠNG TIỆN & BIỂN SỐ</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body>
+
+<header class="header">
+    <div class="header-left">
+        <h1>HỆ THỐNG NHẬN DẠNG PHƯƠNG TIỆN & BIỂN SỐ</h1>
+        <p>Ứng dụng YOLO & Computer Vision trong giám sát giao thông</p>
+    </div>
+    <div class="header-right">
+        <img src="{{ url_for('static', filename='icons/logo.png') }}">
+    </div>
+</header>
+
+<section class="upload-section">
+    <h2>📤 Tải ảnh / video</h2>
+
+    <div class="upload-form">
+        <input type="file" id="fileInput" onchange="parseFilename()"><br><br>
+
+        <input type="text" id="cam" placeholder="Tên camera (vd: cam1)">
+        <input type="text" id="road" placeholder="Tên đường"><br><br>
+
+        <input type="date" id="date">
+        <input type="time" id="time" step="1"><br><br>
+
+        <button onclick="upload()">Tải & Xử lý</button>
+        <div id="progress"></div>
+    </div>
+</section>
+
+<section>
+    <h2>📁 Dữ liệu đã xử lý</h2>
+
+    {% if files %}
+    <table class="file-table">
+        <thead>
+            <tr>
+                <th>Camera</th>
+                <th>Tuyến đường</th>
+                <th>Ngày</th>
+                <th>Giờ</th>
+                <th>Kết quả</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for f in files %}
+            <tr>
+                <td>{{ f.cam }}</td>
+                <td>{{ f.road }}</td>
+                <td>{{ f.date }}</td>
+                <td>{{ f.time }}</td>
+                <td>
+                    <a class="btn" href="/results/{{ f.id }}">Xem</a>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+        <p>Chưa có dữ liệu.</p>
+    {% endif %}
+</section>
+
+<script>
+// Parse tên file để tự động điền thông tin
+function parseFilename(){
+    const fileInput = document.getElementById("fileInput");
+    const file = fileInput.files[0];
+    
+    if(!file) return;
+    
+    const filename = file.name;
+    const nameWithoutExt = filename.substring(0, filename.lastIndexOf('.')) || filename;
+    
+    // Thử parse format: cam1_nguyenhuutho_20260403_070844
+    const parts = nameWithoutExt.split("_");
+    
+    if(parts.length >= 4){
+        const datePart = parts[parts.length - 2];
+        const timePart = parts[parts.length - 1];
+        
+        // Kiểm tra date có đúng format YYYYMMDD (8 chữ số) không
+        // Kiểm tra time có đúng format HHMMSS (6 chữ số) không
+        if(datePart.length === 8 && /^\d+$/.test(datePart) && 
+           timePart.length === 6 && /^\d+$/.test(timePart)){
+            
+            // Parse thành công - điền tất cả thông tin
+            document.getElementById("cam").value = parts[0];
+            document.getElementById("road").value = parts.slice(1, -2).join("_");
+            
+            // Convert date từ YYYYMMDD sang YYYY-MM-DD
+            const year = datePart.substring(0, 4);
+            const month = datePart.substring(4, 6);
+            const day = datePart.substring(6, 8);
+            document.getElementById("date").value = `${year}-${month}-${day}`;
+            
+            // Convert time từ HHMMSS sang HH:MM:SS
+            const hour = timePart.substring(0, 2);
+            const minute = timePart.substring(2, 4);
+            const second = timePart.substring(4, 6);
+            document.getElementById("time").value = `${hour}:${minute}:${second}`;
+            
+            return;
+        }
+    }
+    
+    // Không parse được - chỉ điền cam và road (nếu có), date/time để trống
+    // Người dùng sẽ nhập cam và road, date/time sẽ tự động lấy từ thời điểm hiện tại
+    if(parts.length >= 2){
+        document.getElementById("cam").value = parts[0];
+        document.getElementById("road").value = parts.slice(1).join("_");
+    }
+    
+    // Đặt date/time về rỗng để backend tự động lấy thời điểm hiện tại
+    document.getElementById("date").value = "";
+    document.getElementById("time").value = "";
+}
+
+function upload(){
+    const file = document.getElementById("fileInput").files[0];
+    if(!file){ 
+        alert("Chưa chọn file"); 
+        return; 
+    }
+
+    let cam = document.getElementById("cam").value.trim();
+    let road = document.getElementById("road").value.trim();
+    
+    // Tự động điền cam và road nếu trống
+    if(!cam) {
+        cam = "cam1";
+        document.getElementById("cam").value = cam;
+    }
+    if(!road) {
+        road = "noname";
+        document.getElementById("road").value = road;
+    }
+
+    let date = document.getElementById("date").value.replaceAll("-", "");
+    let time = document.getElementById("time").value.replaceAll(":", "");
+    
+    // Nếu không có date/time, để trống để backend tự động lấy thời điểm hiện tại
+    if(!date) date = "";
+    if(!time) time = "";
+
+    const form = new FormData();
+    form.append("file", file);
+    form.append("cam", cam);
+    form.append("road", road);
+    form.append("date", date);
+    form.append("time", time);
+
+    document.getElementById("progress").innerText = "⏳ Đang upload...";
+
+    fetch("/upload", { method:"POST", body:form })
+    .then(r => r.json())
+    .then(d => {
+        if(d.error){
+            alert("Lỗi: " + d.error);
+            document.getElementById("progress").innerText = "❌ " + d.error;
+            return;
+        }
+        
+        const fid = d.id;
+        const timer = setInterval(() => {
+            fetch(`/status/${fid}`)
+            .then(r => r.json())
+            .then(s => {
+                if(s.error){
+                    clearInterval(timer);
+                    document.getElementById("progress").innerText = "❌ " + s.error;
+                    return;
+                }
+                
+                document.getElementById("progress").innerText =
+                    `⏳ Đang xử lý: ${s.progress || 0}% ${s.message || ""}`;
+                if (s.status === "done" || s.progress === 100) {
+                    clearInterval(timer);
+                    document.getElementById("progress").innerText = "✅ Hoàn thành";
+                    location.reload();
+                }
+            })
+            .catch(err => {
+                clearInterval(timer);
+                document.getElementById("progress").innerText = "❌ Lỗi kết nối";
+            });
+        }, 1000);
+    })
+    .catch(err => {
+        document.getElementById("progress").innerText = "❌ Lỗi upload: " + err.message;
+    });
+}
+</script>
+
+</body>
+</html>

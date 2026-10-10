@@ -1,0 +1,13 @@
+train: ../train/images
+val: ../valid/images
+test: ../test/images
+
+nc: 30
+names: ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'K', 'L', 'M', 'N', 'P', 'S', 'T', 'U', 'V', 'X', 'Y', 'Z']
+
+roboflow:
+  workspace: quangluc64
+  project: license-plate_ocr-lud2n-3dd3a-3vbjx
+  version: 4
+  license: CC BY 4.0
+  url: https://universe.roboflow.com/quangluc64/license-plate_ocr-lud2n-3dd3a-3vbjx/dataset/4
